@@ -1,10 +1,12 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import PagerView from "react-native-pager-view";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Home() {
+  const navigation = useNavigation();
   const pagerRef = useRef<PagerView>(null);
   const [currentPage, setCurrentPage] = useState(0);
   
@@ -16,16 +18,24 @@ export default function Home() {
     { id: "4", src: require("../screens/img/gatoBlack.png") },
   ];
 
+  // Efeito para o carrossel automático
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const nextPage = currentPage === carouselImages.length - 1 ? 0 : currentPage + 1;
+      pagerRef.current?.setPage(nextPage);
+    }, 3000); // Muda a cada 3 segundos
+
+    return () => clearInterval(interval);
+  }, [currentPage, carouselImages.length]);
+
   const goToNextPage = () => {
     const nextPage = currentPage === carouselImages.length - 1 ? 0 : currentPage + 1;
     pagerRef.current?.setPage(nextPage);
-    setCurrentPage(nextPage);
   };
 
   const goToPreviousPage = () => {
     const prevPage = currentPage === 0 ? carouselImages.length - 1 : currentPage - 1;
     pagerRef.current?.setPage(prevPage);
-    setCurrentPage(prevPage);
   };
 
   const onPageSelected = (e: any) => {
@@ -102,7 +112,10 @@ export default function Home() {
             Milhares de patinhas esperam por um lar. 
           </Text>
           <Text style={styles.bannerSubtitle}>Mude uma vida hoje!</Text>
-          <TouchableOpacity style={styles.mainButton}>
+          <TouchableOpacity 
+            style={styles.mainButton}
+            onPress={() => navigation.navigate('Adoption' as never)}
+          >
             <Text style={styles.mainButtonText}>Quero Adotar um Pet 🐾</Text>
           </TouchableOpacity>
         </View>
@@ -143,6 +156,21 @@ export default function Home() {
           <Ionicons name="people-outline" size={30} color="#fff" />
           <Text style={styles.helpTitle}>Voluntário</Text>
           <Text style={styles.helpText}>Doe seu tempo e amor aos animais</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Contact Section */}
+      <View style={styles.contactSection}>
+        <Text style={styles.contactTitle}>Fale Conosco</Text>
+        <Text style={styles.contactSubtitle}>
+          Tem dúvidas ou quer saber mais sobre adoção? Entre em contato conosco!
+        </Text>
+        <TouchableOpacity 
+          style={styles.contactButton}
+          onPress={() => navigation.navigate('Contact' as never)}
+        >
+          <Ionicons name="chatbubble-ellipses" size={20} color="#fff" />
+          <Text style={styles.contactButtonText}>Entrar em Contato</Text>
         </TouchableOpacity>
       </View>
 
@@ -201,7 +229,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   carouselContainer: {
-    height: 180, // Altura fixa para as imagens
+    height: 180,
     position: "relative",
   },
   pagerView: {
@@ -281,7 +309,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "600",
   },
-  // Resto dos estilos permanecem iguais
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
@@ -336,6 +363,40 @@ const styles = StyleSheet.create({
     fontSize: 11,
     textAlign: "center",
     marginTop: 3,
+  },
+  contactSection: {
+    backgroundColor: "#f0e6f5",
+    margin: 20,
+    padding: 20,
+    borderRadius: 16,
+    alignItems: "center",
+  },
+  contactTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#333",
+    marginBottom: 8,
+  },
+  contactSubtitle: {
+    fontSize: 14,
+    color: "#555",
+    textAlign: "center",
+    marginBottom: 20,
+    lineHeight: 20,
+  },
+  contactButton: {
+    flexDirection: "row",
+    backgroundColor: "#b563c5ff",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 10,
+    alignItems: "center",
+    gap: 8,
+  },
+  contactButtonText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 16,
   },
   footer: {
     alignItems: "center",
