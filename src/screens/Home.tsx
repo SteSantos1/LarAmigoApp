@@ -4,12 +4,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import PagerView from "react-native-pager-view";
 import { useNavigation } from "@react-navigation/native";
+import { useFavorites } from "../screens/FavoriteContext"; // Ajuste o caminho
 
 export default function Home() {
   const navigation = useNavigation();
+  const { favorites, toggleFavorite, isFavorite } = useFavorites();
   const pagerRef = useRef<PagerView>(null);
   const [currentPage, setCurrentPage] = useState(0);
-  
+
   // Dados para o carrossel - apenas imagens
   const carouselImages = [
     { id: "1", src: require("../screens/img/cachorroPurple.png") },
@@ -18,12 +20,19 @@ export default function Home() {
     { id: "4", src: require("../screens/img/gatoBlack.png") },
   ];
 
+  // Pets da seção principal
+  const homePets = [
+    { id: "1", name: "Thor", info: "2 anos, Médio", src: require("../screens/img/Thor.png") },
+    { id: "2", name: "Luna", info: "1 ano, Pequeno", src: require("../screens/img/gato.png") },
+    { id: "3", name: "Tobby", info: "8 meses, Pequeno", src: require("../screens/img/yorkshire.png") },
+  ];
+
   // Efeito para o carrossel automático
   useEffect(() => {
     const interval = setInterval(() => {
       const nextPage = currentPage === carouselImages.length - 1 ? 0 : currentPage + 1;
       pagerRef.current?.setPage(nextPage);
-    }, 3000); // Muda a cada 3 segundos
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [currentPage, carouselImages.length]);
@@ -42,23 +51,62 @@ export default function Home() {
     setCurrentPage(e.nativeEvent.position);
   };
 
+  const handleToggleFavorite = (pet: any) => {
+    toggleFavorite(pet);
+  };
+
   return (
     <ScrollView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Ionicons name="paw" size={28} color="#b563c5ff" />
+          <Ionicons name="paw" size={24} color="#b563c5ff" />
           <Text style={styles.headerTitle}>Lar Amigo</Text>
         </View>
-        <TouchableOpacity style={styles.donateButton}>
-          <Ionicons name="heart" size={18} color="#debcebff" />
-          <Text style={styles.donateText}>DOAR</Text>
-        </TouchableOpacity>
+        
+        <View style={styles.headerRight}>
+          <TouchableOpacity 
+            style={styles.iconButton}
+            onPress={() => navigation.navigate('Search' as never)}
+          >
+            <Ionicons name="search" size={20} color="#b563c5ff" />
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.iconButton}
+            onPress={() => navigation.navigate('Favorites' as never)}
+          >
+            <Ionicons name="heart" size={20} color="#b563c5ff" />
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.iconButton}
+            onPress={() => navigation.navigate('Chat' as never)}
+          >
+            <Ionicons name="chatbubble-ellipses" size={20} color="#b563c5ff" />
+          </TouchableOpacity>
+
+          {/* BOTÃO DO BLOG/NOTÍCIAS */}
+          <TouchableOpacity 
+            style={styles.iconButton}
+            onPress={() => navigation.navigate('News' as never)}
+          >
+            <Ionicons name="newspaper" size={20} color="#b563c5ff" />
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.iconButton}
+            onPress={() => navigation.navigate('Login' as never)}
+          >
+            <Ionicons name="person-circle" size={22} color="#b563c5ff" />
+          </TouchableOpacity>
+          
+          {/* BOTÃO DOAR REMOVIDO */}
+        </View>
       </View>
 
       {/* Banner com Carrossel de Imagens */}
       <LinearGradient colors={["#ffffffff", "#b563c5ff"]} style={styles.banner}>
-        {/* Carrossel apenas para as imagens */}
         <View style={styles.carouselContainer}>
           <PagerView 
             ref={pagerRef} 
@@ -78,14 +126,14 @@ export default function Home() {
                   style={styles.arrowLeft} 
                   onPress={goToPreviousPage}
                 >
-                  <Ionicons name="chevron-back" size={24} color="#fff" />
+                  <Ionicons name="chevron-back" size={20} color="#fff" />
                 </TouchableOpacity>
                 
                 <TouchableOpacity 
                   style={styles.arrowRight} 
                   onPress={goToNextPage}
                 >
-                  <Ionicons name="chevron-forward" size={24} color="#fff" />
+                  <Ionicons name="chevron-forward" size={20} color="#fff" />
                 </TouchableOpacity>
               </View>
             ))}
@@ -122,38 +170,64 @@ export default function Home() {
       </LinearGradient>
 
       {/* Pets Section */}
-      <Text style={styles.sectionTitle}>Quem Está Esperando por Você?</Text>
-      <View style={styles.petsContainer}>
-        {[
-          { name: "Thor", info: "2 anos, Médio", src: require("../screens/img/Thor.png") },
-          { name: "Luna", info: "1 anos, Pequeno", src: require("../screens/img/gato.png") },
-          { name: "Tobby", info: "8 meses, Pequeno", src: require("../screens/img/yorkshire.png") },
-        ].map((pet, index) => (
-          <View key={index} style={styles.petCard}>
-            <Image source={pet.src} style={styles.petImage} />
-            <Text style={styles.petName}>{pet.name}</Text>
-            <Text style={styles.petInfo}>{pet.info}</Text>
-          </View>
-        ))}
+      <View style={styles.petsSection}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitlee}> Quem Está Esperando por Você?</Text>
+          <TouchableOpacity 
+            style={styles.seeAllButton}
+            onPress={() => navigation.navigate('Search' as never)}
+          >
+            <Text style={styles.seeAllText}>Ver todos</Text>
+            <Ionicons name="chevron-forward" size={14} color="#b563c5ff" />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.petsContainer}>
+          {homePets.map((pet) => (
+            <View key={pet.id} style={styles.petCard}>
+              <Image source={pet.src} style={styles.petImage} />
+              <TouchableOpacity 
+                style={styles.favoriteButton}
+                onPress={() => handleToggleFavorite(pet)}
+              >
+                <Ionicons 
+                  name={isFavorite(pet.id) ? "heart" : "heart-outline"} 
+                  size={18} 
+                  color={isFavorite(pet.id) ? "#FF6B6B" : "#b563c5ff"} 
+                />
+              </TouchableOpacity>
+              <Text style={styles.petName}>{pet.name}</Text>
+              <Text style={styles.petInfo}>{pet.info}</Text>
+            </View>
+          ))}
+        </View>
       </View>
 
-      {/* Help Section */}
-      <Text style={styles.sectionTitle}>Não Pode Adotar? Ainda Pode Ajudar!</Text>
+      {/* Help Section - CORRIGIDO O ESPAÇAMENTO */}
+      <Text style={[styles.sectionTitle, styles.helpSectionTitle]}>Não Pode Adotar? Ainda Pode Ajudar!</Text>
       <View style={styles.helpContainer}>
-        <TouchableOpacity style={[styles.helpBox, { backgroundColor: "#ad5de2ff" }]}>
-          <Ionicons name="cash-outline" size={30} color="#fff" />
+        <TouchableOpacity 
+          style={[styles.helpBox, { backgroundColor: "#ad5de2ff" }]}
+          onPress={() => navigation.navigate('Donation' as never)}
+        >
+          <Ionicons name="cash-outline" size={24} color="#fff" />
           <Text style={styles.helpTitle}>Doação</Text>
           <Text style={styles.helpText}>Cada R$1 ajuda com vacinas e rações</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.helpBox, { backgroundColor: "#a458d6ff" }]}>
-          <Ionicons name="home-outline" size={30} color="#fff" />
+        <TouchableOpacity 
+          style={[styles.helpBox, { backgroundColor: "#a458d6ff" }]}
+          onPress={() => navigation.navigate('TemporaryHome' as never)}
+        >
+          <Ionicons name="home-outline" size={24} color="#fff" />
           <Text style={styles.helpTitle}>Lar Temporário</Text>
           <Text style={styles.helpText}>Ofereça um lar até a adoção definitiva</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.helpBox, { backgroundColor: "#bc41f5ff" }]}>
-          <Ionicons name="people-outline" size={30} color="#fff" />
+        <TouchableOpacity 
+          style={[styles.helpBox, { backgroundColor: "#bc41f5ff" }]}
+          onPress={() => navigation.navigate('Volunteer' as never)}
+        >
+          <Ionicons name="people-outline" size={24} color="#fff" />
           <Text style={styles.helpTitle}>Voluntário</Text>
           <Text style={styles.helpText}>Doe seu tempo e amor aos animais</Text>
         </TouchableOpacity>
@@ -169,7 +243,7 @@ export default function Home() {
           style={styles.contactButton}
           onPress={() => navigation.navigate('Contact' as never)}
         >
-          <Ionicons name="chatbubble-ellipses" size={20} color="#fff" />
+          <Ionicons name="chatbubble-ellipses" size={18} color="#fff" />
           <Text style={styles.contactButtonText}>Entrar em Contato</Text>
         </TouchableOpacity>
       </View>
@@ -178,9 +252,9 @@ export default function Home() {
       <View style={styles.footer}>
         <Text style={styles.footerText}>Siga o Lar Amigo 💜</Text>
         <View style={styles.socialContainer}>
-          <Ionicons name="logo-instagram" size={24} color="#C13584" />
-          <Ionicons name="logo-facebook" size={24} color="#1877F2" />
-          <Ionicons name="logo-youtube" size={24} color="#FF0000" />
+          <Ionicons name="logo-instagram" size={20} color="#C13584" />
+          <Ionicons name="logo-facebook" size={20} color="#1877F2" />
+          <Ionicons name="logo-youtube" size={20} color="#FF0000" />
         </View>
       </View>
     </ScrollView>
@@ -202,26 +276,22 @@ const styles = StyleSheet.create({
   headerLeft: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: 8,
+  },
+  headerRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: "700",
     color: "#333",
   },
-  donateButton: {
-    flexDirection: "row",
-    backgroundColor: "#b563c5ff",
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    alignItems: "center",
-    gap: 4,
+  iconButton: {
+    padding: 6,
   },
-  donateText: {
-    color: "#fff",
-    fontWeight: "600",
-  },
+  // REMOVIDO: donateButton e donateText
   // Banner com carrossel
   banner: {
     borderRadius: 16,
@@ -248,21 +318,21 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 10,
     top: "50%",
-    marginTop: -12,
+    marginTop: -10,
     backgroundColor: "rgba(0,0,0,0.3)",
-    borderRadius: 20,
-    padding: 4,
+    borderRadius: 16,
+    padding: 6,
   },
   arrowRight: {
     position: "absolute",
     right: 10,
     top: "50%",
-    marginTop: -12,
+    marginTop: -10,
     backgroundColor: "rgba(0,0,0,0.3)",
-    borderRadius: 20,
-    padding: 4,
+    borderRadius: 16,
+    padding: 6,
   },
-  // Indicadores do carrossel - agora na parte de baixo da imagem
+  // Indicadores do carrossel
   carouselIndicators: {
     position: "absolute",
     bottom: 10,
@@ -273,27 +343,27 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   indicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
     backgroundColor: "rgba(255, 255, 255, 0.5)",
-    marginHorizontal: 4,
+    marginHorizontal: 3,
   },
   indicatorActive: {
     backgroundColor: "#b563c5ff",
-    width: 12,
+    width: 10,
   },
   bannerTextContainer: {
     padding: 15,
   },
   bannerTitle: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "700",
     color: "#333",
     textAlign: "center",
   },
   bannerSubtitle: {
-    fontSize: 14,
+    fontSize: 13,
     color: "#555",
     marginTop: 4,
     textAlign: "center",
@@ -308,14 +378,43 @@ const styles = StyleSheet.create({
   mainButtonText: {
     color: "#fff",
     fontWeight: "600",
+    fontSize: 14,
+  },
+  // Pets Section
+  petsSection: {
+    marginBottom: 20,
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginHorizontal: 20,
+    marginBottom: 10,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "700",
     color: "#333",
-    marginHorizontal: 20,
-    marginTop: 10,
-    marginBottom: 10,
+    marginHorizontal: 30,
+  },
+  sectionTitlee: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#333",
+  },
+  // NOVO ESTILO PARA A SEÇÃO DE AJUDA - CORREÇÃO DO ESPAÇAMENTO
+  helpSectionTitle: {
+    marginTop: 25, // Espaçamento acima do título "Não Pode Adotar?"
+  },
+  seeAllButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
+  },
+  seeAllText: {
+    fontSize: 13,
+    color: "#b563c5ff",
+    fontWeight: "600",
   },
   petsContainer: {
     flexDirection: "row",
@@ -328,18 +427,29 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 10,
     width: 100,
+    position: "relative",
   },
   petImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 12,
+    width: 70,
+    height: 70,
+    borderRadius: 10,
+  },
+  favoriteButton: {
+    position: "absolute",
+    top: 5,
+    right: 5,
+    padding: 4,
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    borderRadius: 10,
   },
   petName: {
     fontWeight: "600",
     color: "#333",
+    marginTop: 8,
+    fontSize: 13,
   },
   petInfo: {
-    fontSize: 12,
+    fontSize: 11,
     color: "#777",
   },
   helpContainer: {
@@ -349,61 +459,65 @@ const styles = StyleSheet.create({
   },
   helpBox: {
     width: 100,
-    padding: 12,
+    padding: 10,
     borderRadius: 12,
     alignItems: "center",
   },
   helpTitle: {
     color: "#fff",
     fontWeight: "700",
-    marginTop: 5,
+    marginTop: 4,
+    fontSize: 12,
+    textAlign: "center",
   },
   helpText: {
     color: "#fff",
-    fontSize: 11,
+    fontSize: 10,
     textAlign: "center",
-    marginTop: 3,
+    marginTop: 2,
+    lineHeight: 12,
   },
   contactSection: {
     backgroundColor: "#f0e6f5",
     margin: 20,
-    padding: 20,
+    padding: 18,
     borderRadius: 16,
     alignItems: "center",
   },
   contactTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "700",
     color: "#333",
-    marginBottom: 8,
+    marginBottom: 6,
   },
   contactSubtitle: {
-    fontSize: 14,
+    fontSize: 13,
     color: "#555",
     textAlign: "center",
-    marginBottom: 20,
-    lineHeight: 20,
+    marginBottom: 16,
+    lineHeight: 18,
   },
   contactButton: {
     flexDirection: "row",
     backgroundColor: "#b563c5ff",
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 10,
     alignItems: "center",
-    gap: 8,
+    gap: 6,
   },
   contactButtonText: {
     color: "#fff",
     fontWeight: "600",
-    fontSize: 16,
+    fontSize: 14,
   },
   footer: {
     alignItems: "center",
     marginBottom: 30,
+    paddingHorizontal: 20,
   },
   footerText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "600",
     color: "#555",
   },

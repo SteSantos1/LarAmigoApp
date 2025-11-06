@@ -31,92 +31,134 @@ export default function Adoption() {
         {
             id: "1",
             name: "Thor",
+            species: "cachorro",
             breed: "Beagle",
-            age: "2 anos",
-            size: "Médio",
-            temperament: "Brincalhão e carinhoso",
+            age: "adulto",
+            size: "médio",
+            gender: "macho",
+            info: "Brincalhão e carinhoso",
             src: require("../screens/img/Thor.png")
         },
         {
             id: "2",
             name: "Luna",
+            species: "gato",
             breed: "Siamês",
-            age: "1 ano",
-            size: "Pequeno",
-            temperament: "Calma e afetuosa",
+            age: "adulto",
+            size: "pequeno",
+            gender: "fêmea",
+            info: "Calma e afetuosa",
             src: require("../screens/img/gato.png")
         },
         {
             id: "3",
             name: "Tobby",
+            species: "cachorro",
             breed: "Yorkshire",
-            age: "8 meses",
-            size: "Pequeno",
-            temperament: "Energético e inteligente",
+            age: "filhote",
+            size: "pequeno",
+            gender: "macho",
+            info: "Energético e inteligente",
             src: require("../screens/img/yorkshire.png")
         },
         {
             id: "4",
             name: "Shake",
+            species: "cachorro",
             breed: "Pug",
-            age: "1 ano",
-            size: "Médio",
-            temperament: "Hiperativo e dorminhoco",
+            age: "adulto",
+            size: "médio",
+            gender: "macho",
+            info: "Hiperativo e dorminhoco",
             src: require("../screens/img/pug.png")
         },
         {
             id: "5",
             name: "Duquesa",
+            species: "gato",
             breed: "Persa",
-            age: "3 anos",
-            size: "Pequeno",
-            temperament: "Tranquila e carinhosa",
+            age: "adulto",
+            size: "pequeno",
+            gender: "fêmea",
+            info: "Tranquila e carinhosa",
             src: require("../screens/img/persa.png")
         },
         {
             id: "6",
             name: "Snow",
+            species: "gato",
             breed: "Khao Manee",
-            age: "1 ano",
-            size: "Pequeno",
-            temperament: "Sociavel e apegado",
+            age: "adulto",
+            size: "pequeno",
+            gender: "macho",
+            info: "Sociavel e apegado",
             src: require("../screens/img/KhaoManee.png")
         },
         {
             id: "7",
             name: "Max",
+            species: "cachorro",
             breed: "Chihuahua",
-            age: "10 meses",
-            size: "Pequeno",
-            temperament: "Leal e corajoso",
+            age: "filhote",
+            size: "pequeno",
+            gender: "macho",
+            info: "Leal e corajoso",
             src: require("../screens/img/chihuahua.png")
         },
         {
             id: "8",
             name: "Pantera",
+            species: "gato",
             breed: "Bombaim",
-            age: "3 anos",
-            size: "Pequeno",
-            temperament: "Dócil e inteligente",
+            age: "adulto",
+            size: "pequeno",
+            gender: "fêmea",
+            info: "Dócil e inteligente",
             src: require("../screens/img/bombiam.png")
         },
         {
             id: "9",
             name: "Zeus",
+            species: "cachorro",
             breed: "Husky Siberiano",
-            age: "2 anos",
-            size: "Grande",
-            temperament: "Amigável e gentil",
+            age: "adulto",
+            size: "grande",
+            gender: "macho",
+            info: "Amigável e gentil",
             src: require("../screens/img/husky.png")
         },
         {
             id: "10",
             name: "Fred",
+            species: "gato",
             breed: "Gato Manês",
-            age: "1 ano",
-            size: "Médio",
-            temperament: "Curioso e brincal",
+            age: "adulto",
+            size: "médio",
+            gender: "macho",
+            info: "Curioso e brincal",
             src: require("../screens/img/maine.png")
+        },
+        {
+            id: "11",
+            name: "Bella",
+            species: "cachorro",
+            breed: "Lulu da pomerânia",
+            age: "filhote",
+            size: "pequeno",
+            gender: "fêmea",
+            info: "Fofa e querida",
+            src: require("../screens/img/lulu.png")
+        },
+        {
+            id: "12",
+            name: "Angel",
+            species: "gato",
+            breed: "Gato Birmanês",
+            age: "filhote",
+            size: "médio",
+            gender: "fêmea",
+            info: "Inteligente e amigável",
+            src: require("../screens/img/birmanes.png")
         },
     ];
 
@@ -193,7 +235,7 @@ export default function Adoption() {
                             <Text style={styles.petName}>{pet.name}</Text>
                             <Text style={styles.petInfo}>{pet.breed}</Text>
                             <Text style={styles.petInfo}>{pet.age} • {pet.size}</Text>
-                            <Text style={styles.petTemperament}>{pet.temperament}</Text>
+                            <Text style={styles.petTemperament}>{pet.info}</Text>
                         </View>
                     ))}
                 </ScrollView>
