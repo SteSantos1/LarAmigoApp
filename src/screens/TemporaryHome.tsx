@@ -27,6 +27,42 @@ export default function TemporaryHome() {
     petPreferences: "",
     whyTemporaryHome: ""
   });
+  const [phoneError, setPhoneError] = useState("");
+
+  // Função específica para validar o telefone
+  const handlePhoneChange = (value: string) => {
+    // Remove tudo que não é número
+    let cleaned = value.replace(/\D/g, '');
+    
+    // LIMITA A 11 DÍGITOS
+    cleaned = cleaned.substring(0, 11);
+    
+    // Aplica a máscara: (41) 99999-9999
+    let formatted = cleaned;
+    if (cleaned.length > 0) {
+        formatted = `(${cleaned.substring(0, 2)}`;
+        if (cleaned.length > 2) {
+            formatted += `) ${cleaned.substring(2, 7)}`;
+            if (cleaned.length > 7) {
+                formatted += `-${cleaned.substring(7)}`;
+            }
+        }
+    }
+    
+    setFormData(prev => ({
+        ...prev,
+        phone: formatted
+    }));
+    
+    // Validação em tempo real
+    if (cleaned.length === 11) {
+        setPhoneError("");
+    } else if (cleaned.length > 0) {
+        setPhoneError(`Digite 11 dígitos (${cleaned.length}/11)`);
+    } else {
+        setPhoneError("");
+    }
+  };
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -36,6 +72,15 @@ export default function TemporaryHome() {
   };
 
   const handleSubmit = () => {
+    // Remove caracteres não numéricos para validar
+    const phoneDigits = formData.phone.replace(/\D/g, '');
+    
+    // Valida se tem exatamente 11 dígitos
+    if (phoneDigits.length !== 11) {
+        Alert.alert("Atenção", "O telefone deve conter 11 dígitos (DDD + número). Ex: 41999999999");
+        return;
+    }
+
     // Validação básica
     if (!formData.name || !formData.email || !formData.phone) {
       Alert.alert("Atenção", "Por favor, preencha pelo menos nome, e-mail e telefone.");
@@ -62,6 +107,7 @@ export default function TemporaryHome() {
               petPreferences: "",
               whyTemporaryHome: ""
             });
+            setPhoneError("");
             navigation.goBack();
           }
         }
@@ -156,12 +202,14 @@ export default function TemporaryHome() {
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Telefone *</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, phoneError ? styles.inputError : null]}
             placeholder="(41) 99999-9999"
             keyboardType="phone-pad"
             value={formData.phone}
-            onChangeText={(value) => handleInputChange("phone", value)}
+            onChangeText={handlePhoneChange}
+            maxLength={15}
           />
+          {phoneError ? <Text style={styles.errorText}>{phoneError}</Text> : null}
         </View>
 
         <View style={styles.inputGroup}>
@@ -386,6 +434,15 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
+  },
+  inputError: {
+    borderColor: 'red',
+    borderWidth: 1,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginTop: 4,
   },
   textArea: {
     height: 100,
